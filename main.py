@@ -43,19 +43,15 @@ model = joblib.load('model.pkl')
 # ── Prédiction ──
 df['aanwezigheidsgraad_predicted'] = model.predict(df).clip(0, 1).round(4)
 
-# ── Visualisation par programme ──
-print("=== Prédictions par programme ===\n")
-for program, group in df.groupby('program'):
-    print(f"Programme : {program}")
-    print(group[['subgroup', 'activity', 'aanwezigheidsgraad_predicted']].to_string(index=False))
-    print()
+# ── Affichage du tableau ──
+print(df.to_string(index=False))
 
-# ── Graphique ──
-df.groupby('program')['aanwezigheidsgraad_predicted'].mean().plot(
+# ── Visualisation ──
+df['aanwezigheidsgraad_predicted'].plot(
     kind='bar', figsize=(10, 5), color='steelblue',
-    title='Gemiddelde voorspelde aanwezigheidsgraad per programma'
+    title='Voorspelde aanwezigheidsgraad per les'
 )
 plt.ylabel('Aanwezigheidsgraad')
-plt.xticks(rotation=45, ha='right')
+plt.xticks(ticks=range(len(df)), labels=df['subgroup'], rotation=45, ha='right')
 plt.tight_layout()
 plt.show()

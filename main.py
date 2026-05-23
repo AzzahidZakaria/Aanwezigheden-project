@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import joblib
+import matplotlib.pyplot as plt
 
 def groepeer_activiteit(activiteit):
     activiteit_min = activiteit.lower()
@@ -35,10 +36,26 @@ def DataFrameTransformation(df):
     df['program'] = df['program'].str.split('-').str[:2].str.join('-')
     return df
 
+# ── Chargement ──
 df = pd.read_csv("lessen-subgroepen.csv", sep=';', decimal=',')
-
 model = joblib.load('model.pkl')
 
+# ── Prédiction ──
 df['aanwezigheidsgraad_predicted'] = model.predict(df).clip(0, 1).round(4)
 
-print(df.to_string(index=False))
+# ── Visualisation par programme ──
+print("=== Prédictions par programme ===\n")
+for program, group in df.groupby('program'):
+    print(f"Programme : {program}")
+    print(group[['subgroup', 'activity', 'aanwezigheidsgraad_predicted']].to_string(index=False))
+    print()
+
+# ── Graphique ──
+df.groupby('program')['aanwezigheidsgraad_predicted'].mean().plot(
+    kind='bar', figsize=(10, 5), color='steelblue',
+    title='Gemiddelde voorspelde aanwezigheidsgraad per programma'
+)
+plt.ylabel('Aanwezigheidsgraad')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.show()

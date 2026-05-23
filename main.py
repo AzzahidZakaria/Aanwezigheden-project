@@ -43,10 +43,11 @@ model = joblib.load('model.pkl')
 # ── Prédiction ──
 df['aanwezigheidsgraad_predicted'] = model.predict(df).clip(0, 1).round(4)
 
-# ── Affichage du tableau ──
-print(df.to_string(index=False))
 
 # ── Visualisation ──
+
+print(df.to_string(index=False))
+
 df['aanwezigheidsgraad_predicted'].plot(
     kind='bar', figsize=(10, 5), color='steelblue',
     title='Voorspelde aanwezigheidsgraad per les'
